@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'shifts_app',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -50,7 +51,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
-ROOT_URLCONF = 'shift_project.urls'
+ROOT_URLCONF = 'project_meta.urls'
 
 TEMPLATES = [
     {
@@ -68,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'shift_project.wsgi.application'
+WSGI_APPLICATION = 'project_meta.wsgi.application'
 
 
 # Database
