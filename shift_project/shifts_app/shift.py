@@ -14,7 +14,7 @@ class Shift(models.Model):
     #runs_related
 
     db_table="shift"
-    objects = ShiftManager()
+    # objects = ShiftManager()
 
     shift_group = models.ForeignKey(ShiftGroup, related_name="shifts_related")
 

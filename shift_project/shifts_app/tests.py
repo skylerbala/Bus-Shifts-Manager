@@ -60,18 +60,18 @@ class ShiftTests(TestCase):
 			num_weeks = shift_range / 7 # correct_num_runs
 			start_date = date.today()
 			end_date =  date.today() + timedelta(days=shift_range)
-			date = date.today()
+			cur_date = date.today()
 
 			shift = Shift.objects.create(start_date = start_date, end_date = end_date)
 			for i in range(0,num_weeks + 1):
-				start_datetime = make_aware(datetime.combine(date, time(12,30)), utc)
-				end_datetime = make_aware(datetime.combine(date, time(13,30)), utc)
+				start_datetime = make_aware(datetime.combine(cur_date, time(12,30)), utc)
+				end_datetime = make_aware(datetime.combine(cur_date, time(13,30)), utc)
 				run = Run.objects.create(shift=shift, start_datetime=start_datetime, end_datetime=end_datetime)
-				date = date + timedelta(days=7 * i)
+				cur_date = cur_date + timedelta(days=7 * i)
 			return (shift, num_weeks)
 
 		if case_num == 4:
-			start_date = make_aware(date.today(), utc)
+			start_date = date.today()
 			end_date =  start_date + timedelta(days=7)
 			shift = Shift.objects.create(start_date = start_date, end_date= end_date)
 			return (shift, start_date, end_date)
