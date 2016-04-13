@@ -5,6 +5,7 @@ from django.db.models import Q
 from shifts_app.run import Run
 from shifts_app.shift import Shift
 from shifts_app.shift_group import ShiftGroup
+from shifts_app.test_functions import TestGrouping, ShiftCreation
 
 class RunTests(TestCase):
 	#pass in a run that spans overnight but with a shift that spans 25-27 
