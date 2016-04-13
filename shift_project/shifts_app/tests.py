@@ -7,6 +7,10 @@ from shifts_app.shift import Shift
 from shifts_app.shift_group import ShiftGroup
 
 class RunTests(TestCase):
+	#pass in a run that spans overnight but with a shift that spans 25-27 
+	#so long as the resulting runs in the shift don't overlap then it's valid
+
+	#all other checks need to be expecting only one output
 
 	def set_up(self):
 		start_date = date.today()
