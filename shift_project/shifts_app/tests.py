@@ -9,104 +9,123 @@ from shifts_app.shift_group import ShiftGroup
 class RunTests(TestCase):
 
 	def set_up(self):
-		start_date = date.today()
-		end_date =  start_date + timedelta(days=7)
-		start_time = time(12,30)
-		end_time =	time(13,30)
+		#run_times_list  = list of dicts
+		
+		shift_start_date = date(2016,4,12)
+		shift_end_date = date(2016,4,13)
+		# 	shift_start_time = time(11,00)
+		#	shift_end_time = time(15,00)
 
-		start_datetime = make_aware(datetime.combine(start_date, start_time),utc)
-		end_datetime = make_aware(datetime.combine(date.today(), end_time),utc)
-		shift = Shift.objects.create(start_date= start_date, end_date= end_date)
-		run = Run.objects.create(shift=shift, start_datetime=start_datetime, end_datetime=end_datetime)
+		run_times_list = [
+					{time(11,00): time(12,00)}, 
+					{time(12,00): time(13,00)},
+					{time(13,00):  time(14,00)},
+					{time(14,00):  time(15,00)}
+			]
+		
+		for key in run_times_list[0]:
+			run_start_datetime = make_aware(datetime.combine(shift_start_date,key),utc)
+			run_end_datetime = 	make_aware(datetime.combine(shift_start_date, run_times_list[0][key]), utc)
 
-		return (shift,run,start_datetime,end_datetime)
+		shift = Shift.objects.create_shift(shift_start_date, shift_end_date, run_times_list)
+		run = Run.objects.create(shift = shift, start_datetime = run_start_datetime, end_datetime = run_end_datetime)
+		run_info = [run_start_datetime, run_end_datetime, shift]
+
+		return (run, run_info)
 	
 	def test_start_datetime(self):
-		(shift,run,start_datetime,end_datetime) = self.set_up()
-		self.assertEqual(run.start_date,start_datetime)
+		(run, run_info) = self.set_up()
+
+		self.assertEqual(run.start_datetime, run_info[0])
 
 	def test_end_datetime(self):
-		(shift,run,start_datetime,end_datetime) = self.set_up()
-		self.assertEqual(run.end_datetime, end_datetime)
+		(run, run_info) = self.set_up()
+		self.assertEqual(run.end_datetime, run_info[1])
 
 	def test_fk_to_shift(self):
-		(shift,run,start_datetime,end_datetime) = self.set_up()
-		self.assertEqual(run.shift,shift)
+		(run, run_info) = self.set_up()
+		self.assertEqual(run.shift, run_info[2])
 
 class ShiftTests(TestCase):
 
 	def set_up(self,case_num):
 
+		shift_start_date = date(2016,4,12)
+		shift_end_date = date(2016,4,13)
+		shift_start_time = time(11,00)
+		shift_end_time = time(15,00)
+		shift_start_datetime = make_aware(datetime.combine(shift_start_date,shift_start_time), utc)
+		shift_end_datetime = make_aware(datetime.combine(shift_start_date,shift_end_time),utc)
+		shift_info = [shift_start_datetime, shift_end_datetime]
+		total_dur = shift_start_datetime - shift_end_datetime
+		runs = []
+		run_times_list = [
+				{time(11,00): time(12,00)}, 
+				{time(12,00): time(13,00)},
+				{time(13,00):  time(14,00)},
+				{time(14,00):  time(15,00)}
+		]
+		
+		shift = Shift.objects.create_shift(shift_start_date, shift_end_date, run_times_list) # can create_shift generate the run times list from the start_datetime and end_datetime
+
+		for i in range(0,5):
+			for key in run_times_list[i]:
+				run_start_datetime = make_aware(datetime.combine(shift_start_date,key),utc)
+				run_end_datetime = 	make_aware(datetime.combine(shift_start_date, run_times_list[i][key]), utc)
+				run = Run.objects.create(shift = shift, start_datetime = run_start_datetime, end_datetime = run_end_datetime)
+
+			runs.append(run)
+			# print "run:%s\n" %(run)
+
 		if case_num == 1:
-			start_date = date.today()
-			end_date =  start_date + timedelta(days=7)
-			shift = Shift.objects.create(start_date = start_date)
-			return (shift, start_date)
-
+			return (shift, shift_info)
+		
 		if case_num == 2:
-			start_date = date.today()
-			end_date =  start_date + timedelta(days=7)
-			start_time = time(12,30)
-			end_time =	time(13,30)
-
-			start_datetime = make_aware(datetime.combine(start_date, start_time),utc)
-			end_datetime = make_aware(datetime.combine(date.today(), end_time),utc)
-			shift = Shift.objects.create(start_date= start_date, end_date= end_date)
-			run = Run.objects.create(shift=shift, start_datetime=start_datetime, end_datetime=end_datetime)
-			return (shift, run)
-
+			return (shift, runs[0])
+		
 		if case_num == 3:
-			shift_range = 21
-			num_weeks = shift_range / 7 # correct_num_runs
-			start_date = date.today()
-			end_date =  date.today() + timedelta(days=shift_range)
-			cur_date = date.today()
+			num_expected_runs = total_dur / timedelta(hours=1)
+			# print "num_expected_runs: %d\n" %(num_expected_runs) 
+			return (shift,runs, num_expected_runs)
 
-			shift = Shift.objects.create(start_date = start_date, end_date = end_date)
-			for i in range(0,num_weeks + 1):
-				start_datetime = make_aware(datetime.combine(cur_date, time(12,30)), utc)
-				end_datetime = make_aware(datetime.combine(cur_date, time(13,30)), utc)
-				run = Run.objects.create(shift=shift, start_datetime=start_datetime, end_datetime=end_datetime)
-				cur_date = cur_date + timedelta(days=7 * i)
-			return (shift, num_weeks)
+	def test_shift_creation_start_datetime(self):
+		case_num = 1
+		(shift, shift_info) = self.set_up(case_num)
+		self.assertEqual(shift.start_datetime, shift_info.shift_start_datetime)
 
-		if case_num == 4:
-			start_date = date.today()
-			end_date =  start_date + timedelta(days=7)
-			shift = Shift.objects.create(start_date = start_date, end_date= end_date)
-			return (shift, start_date, end_date)
-
+	def test_shift_creation_end_datetime(self):
+		case_num = 1
+		(shift, shift_info) = self.set_up(case_num)
+		self.assertEqual(shift.end_datetime.time, shift_info.shift_end_datetime)
+	
 	def test_reverse_to_run(self):
 		case_num = 2
 		(shift, run) = self.set_up(case_num)
-		self.assertEqual(shift.run_related.filter(id=1), run)
+		shift_run = shift.runs_related.get(id=1)
+		self.assertEqual(shift_run, run)
 
-	def test_create_single_shift(self):
-		case_num = 1
-		(shift, start_date) = self.set_up(case_num)
-		self.assertEqual(shift.start_date, start_date)
-
-	def test_create_recurring_shift(self):
+	def test_num_shift_runs(self):
 		case_num = 3
-		(shift, correct_num_runs) = self.set_up(case_num)
-		num_runs = shift.run_related.count()
-		self.assertEqual(num_runs, correct_num_runs)
+		(shift, runs, num_expected_runs) = self.set_up(case_num)
+		num_shift_runs = shift.runs_related.count()
+		self.assertEqual(num_shift_runs, num_expected_runs)
 
-	def test_start_date(self):
-		case_num = 4
-		(shift, start_date, end_date) = self.set_up(case_num)
-		self.assertEqual(shift.start_date, start_date)
+	def test_shift_first_run(self):
+		case_num = 3
+		(shift, runs, num_expected_runs) = self.set_up(case_num)
+		num_shift_runs = shift.runs_related.count()
+		shift_first_run = shift.runs_related.get(id=1)
+		expected_first_run = runs[0]
+		self.assertEqual(shift_first_run, expected_first_run)
 
-	def test_end_date(self):
-		case_num = 4
-		(shift, start_date, end_date) = self.set_up(case_num)
-		self.assertEqual(shift.end_date)
-
-# 	def test_gap(self):
+	def test_shift_last_run(self):
+		case_num = 3
+		(shift, runs, num_expected_runs) = self.set_up(case_num)
+		num_shift_runs = shift.runs_related.count()
+		shift_last_run = shift.runs_related.get(id=num_shift_runs)
+		expected_final_run = runs[len(runs)]
+		self.assertEqual(shift_last_run, expected_final_run)
 		
-		
-
-
 # # 	def test_shiftgroup(self):
 
 # # class ShiftGroupTests(TestCase):
@@ -114,3 +133,9 @@ class ShiftTests(TestCase):
 # 	# def set_up(self):
 
 # # 	def
+
+# def test_create_recurring_shift(self):
+	# 	case_num = 3
+	# 	(shift, correct_num_runs) = self.set_up(case_num)
+	# 	num_runs = shift.run_related.count()
+	# 	self.assertEqual(num_runs, correct_num_runs)
