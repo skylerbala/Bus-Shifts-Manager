@@ -6,7 +6,7 @@ from shifts_app.run import Run
 from shifts_app.shift import Shift
 from shifts_app.shift_group import ShiftGroup
 
-# Some code borrowed from BruBry
+# Some code borrowed from Bryce
 
 class ShiftTests(TestCase):
 
