@@ -301,9 +301,9 @@ class ShiftTests(TestCase):
 
         if case_num == 9:
             shift_start_date = date(2016,4,23)
-            shift_end_date = date(2016,4,26)
-            shift_start_time = time(00,00)
-            shift_end_time = time(23,59)
+            shift_end_date = date(2016,4,25)
+            shift_start_time = time(20,00)
+            shift_end_time = time(2,00)
 
             shift_start_datetime = make_aware(datetime.combine(shift_start_date,shift_start_time), utc)
             shift_end_datetime = make_aware(datetime.combine(shift_start_date,shift_end_time),utc)
@@ -313,7 +313,7 @@ class ShiftTests(TestCase):
 
             run_times_list = [
                 {'start_time':time(20,00), 'end_time': time(3,00)},
-                {'start_time':time(3,00), 'end_time': time(7,00)},
+                {'start_time':time(3,00), 'end_time': time(21,00)},
                 {'start_time':time(21,00), 'end_time': time(2,00)},  
             ]
             
