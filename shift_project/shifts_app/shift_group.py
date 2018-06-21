@@ -9,7 +9,7 @@ class ShiftGroup(models.Model):
 
     #shifts_related
 
-    db_table="shift_group"
+    db_table = "shift_group"
     objects = ShiftGroupManager()
 
     class Meta:
