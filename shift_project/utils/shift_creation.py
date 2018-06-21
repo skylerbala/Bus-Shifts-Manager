@@ -1,4 +1,3 @@
-from shifts_app.run import Run
 from shifts_app.shift import Shift
 from django.utils.timezone import utc, make_aware, get_default_timezone
 import datetime

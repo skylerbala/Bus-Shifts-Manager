@@ -1,42 +1,47 @@
 {% extends 'shift_app/base.html' %}
 {% block main %}
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">Shift #</th>
-        <th scope="col">First</th>
-        <th scope="col">Last</th>
-        <th scope="col">Handle</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td>Larry</td>
-        <td>the Bird</td>
-        <td>@twitter</td>
-      </tr>
-    </tbody>
-  </table>
-  {% if shifts %}
-      <ul>
-          {% for shift in shifts %}
-              <li>{{ shift.start_datetime }}</li>
-          {% endfor %}
-      </ul>
+  {% if shifts %} 
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Shift #</th>
+          <th scope="col">Start</th>
+          <th scope="col">End</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for shift in shifts %}
+          <tr data-toggle="collapse" data-target="#demo{{ forloop.counter }}" class="accordion-toggle">
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>{{ shift.start_datetime }}</td>
+            <td>{{ shift.end_datetime }}</td>
+          </tr>
+          <tr >
+            <td colspan="6" class="hiddenRow">
+              <div class="accordian-body collapse" id="demo{{ forloop.counter }}"> 
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Run #</th>
+                      <th scope="col">Start</th>
+                      <th scope="col">End</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for run in shift.run_set.all %}
+                      <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ run.start_datetime }}</td>
+                        <td>{{ run.end_datetime }}</td>
+                      </tr>
+                    {% endfor %}
+                </table>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+    </table>
   {% else %}
-      <h3>You don't have any shifts</h3>
+    <h3>You don't have any shifts</h3>
   {% endif %}
 {% endblock %}
