@@ -20,6 +20,7 @@ class ShiftManager(models.Manager):
 
         for run_times_dict in run_times_list:
             
+            
             run_start_datetime = make_aware( datetime.datetime.combine(last_end_date, run_times_dict['start_time']), get_default_timezone() ).astimezone(utc)
             run_end_datetime = make_aware(datetime.datetime.combine(last_end_date, run_times_dict['end_time']), get_default_timezone()).astimezone(utc)
             if run_start_datetime > run_end_datetime:
