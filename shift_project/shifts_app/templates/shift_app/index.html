@@ -1,10 +1,10 @@
 {% extends 'shift_app/base.html' %}
 {% block main %}
-  {% if shifts %} 
-    <table class="table">
+  {% if shifts %}
+    <table class="table table-bordered table-hover">
       <thead>
         <tr>
-          <th scope="col">Shift #</th>
+          <th scope="col">#</th>
           <th scope="col">Start</th>
           <th scope="col">End</th>
         </tr>
@@ -18,24 +18,28 @@
           </tr>
           <tr >
             <td colspan="6" class="hiddenRow">
-              <div class="accordian-body collapse" id="demo{{ forloop.counter }}"> 
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col">Run #</th>
-                      <th scope="col">Start</th>
-                      <th scope="col">End</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for run in shift.run_set.all %}
+              <div class="accordian-body collapse" id="demo{{ forloop.counter }}" style="padding: 50px; background-color:dimgrey"> 
+                {% if shift.run_set.count != 0 %} 
+                  <table class="table table-bordered table-hover table">
+                    <thead>
                       <tr>
-                        <th scope="row">{{ forloop.counter }}</th>
-                        <td>{{ run.start_datetime }}</td>
-                        <td>{{ run.end_datetime }}</td>
+                        <th scope="col">Runs</th>
+                        <th scope="col">Start</th>
+                        <th scope="col">End</th>
                       </tr>
-                    {% endfor %}
-                </table>
+                    </thead>
+                    <tbody>
+                      {% for run in shift.run_set.all %}
+                        <tr>
+                          <th scope="row">{{ forloop.counter }}</th>
+                          <td>{{ run.start_datetime }}</td>
+                          <td>{{ run.end_datetime }}</td>
+                        </tr>
+                      {% endfor %}
+                  </table>
+                {% else %}
+                  <p>No runs for this shift</p>
+                {% endif %}
               </div>
             </td>
           </tr>
