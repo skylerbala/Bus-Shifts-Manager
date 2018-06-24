@@ -4,8 +4,6 @@ from django.utils.timezone import utc, make_aware, get_default_timezone
 import datetime
 
 
-from shifts_app.shift_group import ShiftGroup
-
 #models store
 
 class ShiftManager(models.Manager):
@@ -20,7 +18,7 @@ class ShiftManager(models.Manager):
 
         for run_times_dict in run_times_list:
             
-            
+
             run_start_datetime = make_aware( datetime.datetime.combine(last_end_date, run_times_dict['start_time']), get_default_timezone() ).astimezone(utc)
             run_end_datetime = make_aware(datetime.datetime.combine(last_end_date, run_times_dict['end_time']), get_default_timezone()).astimezone(utc)
             if run_start_datetime > run_end_datetime:
@@ -45,6 +43,9 @@ class ShiftManager(models.Manager):
             | Q(start_datetime__lte=start_datetime, end_datetime__gte=end_datetime)
         )
 
+        #lte = less than or equal to
+        #gte = greater than or equal to
+
 class Shift(models.Model):
     #runs_related
     db_table="shift"
@@ -53,6 +54,9 @@ class Shift(models.Model):
 
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
+
+    def __str__(self):
+        return str(self.start_datetime)
 
     class Meta:
         app_label = "shifts_app"
