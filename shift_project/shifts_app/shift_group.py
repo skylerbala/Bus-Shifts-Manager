@@ -12,8 +12,13 @@ class ShiftGroup(models.Model):
     #shifts_related = 
     
     objects = ShiftGroupManager()
+    date = models.DateField()
+
 
     def get_shifts(self):
+        # works we ned to make a query to all the shifts that exist then filter them through the get shifts function
+        #give shift a foreign key to shift group
+        #shiftgroup gets a shift set for each date
         start_datetime = make_aware(datetime.datetime(2017,5,1), get_default_timezone())
         end_datetime = make_aware(datetime.datetime(2017,5,3), get_default_timezone())
         return Shift.objects.get_shifts_in_datetime_range(start_datetime, end_datetime)
