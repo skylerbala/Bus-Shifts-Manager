@@ -3,7 +3,6 @@ from shifts_app.shift import Shift
 
 
 class Run(models.Model):
-    db_table="run"
 
     shift = models.ForeignKey('Shift', on_delete=models.CASCADE)
     user_id = models.IntegerField(default=0, blank=True)
@@ -13,3 +12,4 @@ class Run(models.Model):
 
     class Meta:
         app_label = "shifts_app"
+        db_table="run"
