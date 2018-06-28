@@ -1,24 +1,46 @@
 from django.db import models
-from django.db.models import Q
 from django.utils.timezone import utc, make_aware, get_default_timezone
 import datetime
-from shifts_app.shift_group import ShiftGroup
-#import utils.shift_creation
+from django.db.models import Q
 
-#models store
+class ShiftGroupManager(models.Manager):        
 
-class ShiftManager(models.Manager):
+    def get_or_create(self, start_datetime, end_datetime):
+        shift_group = None
 
-    def create_shift(self, start_datetime, end_datetime, run_times_list):
-        #run_times_list -> [{start_time=time, end_time=time},{...},{...}]
-        from shifts_app.run import Run
+        try:
+            weekday = (1 + start_datetime.weekday()) % 7 + 1
 
-        runs_to_create = []
+            shift_group = self.get(start_datetime__week_day=weekday, start_datetime__hour=start_datetime.hour, start_datetime__minute=start_datetime.minute)
 
-        #can we assume shifts are never more than a day long
+            print('get existing shift')
+            if shift_group.start_datetime.date() > start_datetime.date():
+                shift_group.start_datetime=start_datetime
+            if shift_group.end_datetime.date() < end_datetime.date():
+                shift_group.end_datetime=end_datetime
+            shift_group.save()
 
+        except ShiftGroup.DoesNotExist:
+            print('create new shift')
+            shift_group = self.create(start_datetime=start_datetime, end_datetime=end_datetime)
+
+        return shift_group
+
+
+class ShiftGroup(models.Model):
+    objects = ShiftGroupManager()
+    start_datetime = models.DateTimeField()
+    end_datetime = models.DateTimeField()
+
+    class Meta:
+        app_label = "shifts_app"
+        db_table = "shift_groups"
+
+
+        '''
         shift_group = ShiftGroup.objects.all()
-
+        
+        
         if shift_group:
             #logic isnt right
 
@@ -55,50 +77,4 @@ class ShiftManager(models.Manager):
         else:
             print('else hit')
             shift_group = ShiftGroup.objects.create(start_datetime=start_datetime, end_datetime=end_datetime, start_date_range=start_datetime.date(), end_date_range=end_datetime.date())
-
-        shift_instance = self.create(start_datetime=start_datetime, end_datetime=end_datetime, shift_group = shift_group)
-        last_end_date = start_datetime.date()
-
-        for run_times_dict in run_times_list:
-            run_start_datetime = make_aware( datetime.datetime.combine(last_end_date, run_times_dict['start_time']), get_default_timezone() ).astimezone(utc)
-            run_end_datetime = make_aware(datetime.datetime.combine(last_end_date, run_times_dict['end_time']), get_default_timezone()).astimezone(utc)
-            if run_start_datetime > run_end_datetime:
-                run_end_datetime += datetime.timedelta(days=1)
-            last_end_date = run_end_datetime.date()
-
-            runs_to_create.append(Run(
-                shift=shift_instance,
-                start_datetime=run_start_datetime,
-                end_datetime=run_end_datetime
-            ))
-        Run.objects.bulk_create(runs_to_create)
-
-        return shift_instance
-
-
-    def get_shifts_in_datetime_range(self, start_datetime, end_datetime):
-        return self.filter(
-            Q(start_datetime__lte=start_datetime, end_datetime__gte=start_datetime)
-            | Q(start_datetime__lte=end_datetime, end_datetime__gte=end_datetime)
-            | Q(start_datetime__gte=start_datetime, end_datetime__lte=end_datetime)
-            | Q(start_datetime__lte=start_datetime, end_datetime__gte=end_datetime)
-        )
-
-        #lte = less than or equal to
-        #gte = greater than or equal to
-
-class Shift(models.Model):
-    #runs_related
-    
-    objects = ShiftManager()
-
-    start_datetime = models.DateTimeField()
-    end_datetime = models.DateTimeField()
-    shift_group = models.ForeignKey(ShiftGroup, related_name='shift_set', on_delete=models.CASCADE)
-
-    def __str__(self):
-        return str(self.start_datetime)
-
-    class Meta:
-        app_label = "shifts_app"
-        db_table="shift"
+        '''

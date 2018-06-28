@@ -2,9 +2,9 @@ from django.test import TestCase
 from datetime import datetime, date, time, timedelta
 from django.utils.timezone import make_aware, get_default_timezone, utc
 from django.db.models import Q
-from shifts_app.run import Run
-from shifts_app.shift import Shift
-from shifts_app.shift_group import ShiftGroup
+from .run import Run
+from .shift import Shift
+from .shift_group import ShiftGroup
 
 # Some code borrowed from Bryce
 
