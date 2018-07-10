@@ -1,0 +1,50 @@
+<table class="table table-bordered table-hover table">
+  <thead>
+    <tr>
+      <th scope="col">Shift #</th>
+      <th scope="col">Date</th>
+      <th scope="col">Day</th>
+      <th scope="col">Start Time</th>
+      <th scope="col">End Time</th>
+      <th style="width:1px"></th>
+    </tr>
+  </thead>
+  <tbody id='accordion-shifts'>
+    {% for shift in sg.shifts %}
+      <tr data-toggle='collapse' href="#run{{ forloop.counter }}-{{ forloop.parentloop.counter }}" class="accordion-toggle">
+        <th scope="row">{{ forloop.counter }}</th>
+        <td>{{ shift.start_datetime|date:"d M Y" }}</td>
+        <td>{{ sg.start_datetime|date:"l" }}</td>
+        <td>{{ sg.start_datetime|time:"H:i" }}</td>
+        <td>{{ sg.end_datetime|time:"H:i" }}</td>
+        <td style="width:150px">
+          <div style='display: flex; justify-content: space-around;'>
+            <form method='post' action="{% url 'shifts:delete' pk=shift.pk %}" enctype="multipart/form-data" style='display:inline'>
+              {% csrf_token %}
+              <button class='btn btn-primary' type='submit'>
+                <i class="material-icons">delete_forever</i>
+              </button>
+            </form>
+            <form style='inline' action="{% url 'shifts:update' pk=shift.pk %}" method='post' enctype="multipart/form-data">
+              {% csrf_token %}
+              <button class='btn btn-primary' type='submit'>
+                <i class="material-icons">edit</i>
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="6" class="hiddenRow">
+          <div class="accordian-body collapse" data-parent='#accordion-shifts' id="run{{ forloop.counter }}-{{ forloop.parentloop.counter }}" style="padding-left: 40px; padding-bottom: 20px; background-color:gray"> 
+            {% if shift.run_set.count != 0 %} 
+              {% include 'shifts/table-runs.html' %}
+            {% else %}
+              <p>No runs for this shift</p>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

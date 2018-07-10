@@ -1,0 +1,10 @@
+
+  {% for field in shift_form %}
+    <div class="form-group col">
+        {{ field.label_tag }} {{ field }}
+
+        <div>
+            <span class="text-danger small">{{ field.errors }}</span>
+        </div>
+    </div>
+  {% endfor %}

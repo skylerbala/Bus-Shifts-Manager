@@ -1,1 +1,0 @@
-from shifts_app.models import *
