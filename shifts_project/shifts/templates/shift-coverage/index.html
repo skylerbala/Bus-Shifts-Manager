@@ -1,0 +1,30 @@
+{% extends 'base_body.html' %}
+{% block main %}
+
+  <div class='jumbotron'>
+    <h1>Shift Coverage</h1>
+  </div>
+  
+  <div class='card mb-4'>
+    <h3 class='card-header'>Open Shifts</h3>
+    <div class='card-body'>
+      {% if open_shifts %}
+        {% include 'shift-coverage/open-shift-base.html' %}
+      {% else %}
+        Currently, there are no open shifts; Please check tomorrow :D
+      {% endif %}
+    </div>
+  </div>
+
+  <div class='card'>
+    <h3 class='card-header'>My Shifts</h3>
+    <div class='card-body'>
+      {% if filled_shifts %}
+        {% include 'shift-coverage/filled-shift-base.html' %}
+      {% else %}
+        Currently, you are not assigned to any shifts
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+

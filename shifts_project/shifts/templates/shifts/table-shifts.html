@@ -2,6 +2,7 @@
   <thead>
     <tr>
       <th scope="col">Shift #</th>
+      <th scope="col">Coverage(Employee/Open)</th>
       <th scope="col">Date</th>
       <th scope="col">Day</th>
       <th scope="col">Start Time</th>
@@ -13,6 +14,13 @@
     {% for shift in sg.shifts %}
       <tr data-toggle='collapse' href="#run{{ forloop.counter }}-{{ forloop.parentloop.counter }}" class="accordion-toggle">
         <th scope="row">{{ forloop.counter }}</th>
+        <td>
+          {% if shift.employee.user.first_name == None %}
+            Open
+          {% else %}
+            {{ shift.employee.user.first_name }}
+          {% endif %}
+        </td>
         <td>{{ shift.start_datetime|date:"d M Y" }}</td>
         <td>{{ sg.start_datetime|date:"l" }}</td>
         <td>{{ sg.start_datetime|time:"H:i" }}</td>

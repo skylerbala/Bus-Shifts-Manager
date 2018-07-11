@@ -40,7 +40,8 @@ INSTALLED_APPS = (
     'shifts',
     'autofixture',
     'home',
-    'accounts'
+    'accounts',
+    'employees',
 )
 
 MIDDLEWARE_CLASSES = (

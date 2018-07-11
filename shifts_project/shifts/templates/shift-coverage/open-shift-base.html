@@ -1,0 +1,31 @@
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Date</th>
+      <th scope="col">Day</th>
+      <th scope="col">Start Time</th>
+      <th scope="col">End Time</th>
+      <th style="width:1px"></th>
+    </tr>
+  </thead>
+  <tbody id='accordion'>
+    {% for shift in open_shifts %}
+      <tr data-toggle='collapse' href="#shifts{{ forloop.counter }}" class="accordion-toggle">
+        <th scope="row">+</th>
+        <td>{{ shift.start_datetime|date:"d M Y" }}</td>
+        <td>{{ shift.start_datetime|date:"l" }}</td>
+        <td>{{ shift.start_datetime|time:"H:i" }}</td>
+        <td>{{ shift.end_datetime|time:"H:i" }}</td>
+        <td style="width:50px">
+          <div style='display: flex; justify-content: space-around;'>
+            <form style='inline' action="{% url 'shifts:coverage-fill' pk=shift.pk %}" method='post' enctype="multipart/form-data">
+              {% csrf_token %}
+              <button class='btn btn-primary' type='submit'>Fill</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

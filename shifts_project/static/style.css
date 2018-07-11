@@ -9,3 +9,8 @@ body {
 main {
   padding: 35px;
 }
+
+.btn {
+  background-color: #cc3333;
+  border-color: #cc3333;
+}

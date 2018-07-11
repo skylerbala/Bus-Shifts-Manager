@@ -2,7 +2,7 @@
 
 {% block body %}
   <nav class="navbar navbar-expand-md navbar-dark" style="background-color: #cc3333;">
-    <img class="navbar-brand" style='width: 15%; height: 15%;' src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Unitrans_logo.gif?1531200353049">
+    <img class="navbar-brand" href="{% url 'home:index' %}" style='width: 15%; height: 15%;' src="https://upload.wikimedia.org/wikipedia/commons/8/8a/Unitrans_logo.gif?1531200353049">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
     </button>
@@ -13,7 +13,13 @@
             <a class="nav-link" href="{% url 'home:index' %}">Home</a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="{% url 'employees:index' %}">Employees</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="{% url 'shifts:index' %}">Shifts</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'shifts:coverage' %}">Shift Coverage</a>
           </li>
         </ul>
         <ul class="navbar-nav nav-right">

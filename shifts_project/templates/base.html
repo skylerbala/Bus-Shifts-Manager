@@ -17,14 +17,59 @@
     {% block body %}
     {% endblock %}
     
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     <script>
       $('.material-icons').on('click', function (ev) {
         ev.stopPropagation();
-    });
-  </script>
+      });
+
+      document.getElementById('id_number_of_runs').addEventListener('change', () => {
+          var selector = document.getElementById('id_number_of_runs');
+          var choice = selector[selector.selectedIndex].value;
+          var myNode = document.getElementById("id_run_forms");
+          while (myNode.firstChild) {
+              myNode.removeChild(myNode.firstChild);
+          }
+          let run_forms = document.querySelector('#id_run_forms');
+          for (let i = 0; i < choice; i++) {
+              let form = document.querySelector('#shift-form-og');
+              form = form.cloneNode(true);
+              form.querySelector('#form-title').textContent = 'Run ' + (i+1);
+              form.querySelector('#id_start_datetime').name = 'start_datetime_run_' + i;
+              form.querySelector('#id_start_datetime')
+              form.querySelector('#id_end_datetime').name = 'end_datetime_run_' + i;
+
+              run_forms.appendChild(form);
+          }
+
+          $('[data-toggle="datepicker"]').datetimepicker();
+      });
+    </script>
   </body>
 </html>
+
+
+
+<!-- 
+<script>
+    $("#id_number_of_runs").change(function () {
+      var url = '/shifts/num-of-runs'  // get the url of the `load_cities` view
+      var numOfRuns = $(this).val();  // get the selected country ID from the HTML input
+
+      $.ajax({
+        url: url,                    
+        data: {
+          'num_of_runs': numOfRuns       // add the country id to the GET parameters
+        },
+        method: 'GET',
+        success: function (data) { 
+          console.log(data)  // `data` is the return of the `load_cities` view function
+          $("#id_run_forms").html(data.run_formset);  // replace the contents of the city input with the data that came from the server
+        }
+      });
+
+    });
+</script> -->

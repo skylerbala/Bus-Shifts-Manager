@@ -45,13 +45,14 @@ class ShiftManager(models.Manager):
 
 class Shift(models.Model):    
     from .shift_groups import ShiftGroup
-    from accounts.models import Employee
+    from employees.models import Employee
     
     objects = ShiftManager()
 
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
-    shift_group = models.ForeignKey(ShiftGroup, related_name='shift_set', on_delete=models.CASCADE, blank=True)
+    shift_group = models.ForeignKey(ShiftGroup, related_name='shift_set', on_delete=models.CASCADE, null=True)
+    employee = models.ForeignKey(Employee, related_name='employee_set', on_delete=models.CASCADE, null=True)
 
 
     def __str__(self):
@@ -62,5 +63,3 @@ class Shift(models.Model):
             'pk': self.pk
         })
 
-    class Meta:
-        db_table="shift"

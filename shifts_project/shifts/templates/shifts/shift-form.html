@@ -2,14 +2,31 @@
     <h3 class='card-header'>Add Shift</h3>
     <div class='card-body'>
         <form class="form-horizontal" action="{% url 'shifts:add' %}" method="post" enctype="multipart/form-data" autocomplete="off">
+            {% csrf_token %}
             <div id='shift-form-og'>
-                {% csrf_token %}
                 <h3 id='form-title'>Shift</h3>
                 <div class='row'>
-                    {% include 'shifts/form-template.html' %}
+                    {% for field in shift_form %}
+                        <div class="form-group col">
+                            {{ field.label_tag }} {{ field }}
+                            <div>
+                                <span class="text-danger small">{{ field.errors }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
-            <h4>{{ select_number_of_runs_form }}</h4 >
+            <div class='row'>
+                {% for field in employee_form %}
+                <div class="form-group col">
+                    {{ field.label_tag }} {{ field }}
+                    <div>
+                        <span class="text-danger small">{{ field.errors }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <h4>{{ select_number_of_runs_form }}</h4>
             <div id='id_run_forms'>
             </div>
             <div class="col">
@@ -18,31 +35,3 @@
         </form>
     </div>
 </div>
-
-<script type="text/javascript">
-    document.getElementById('id_number_of_runs').addEventListener('change', () => {
-        var selector = document.getElementById('id_number_of_runs');
-        var choice = selector[selector.selectedIndex].value;
-        console.log(choice)
-        var myNode = document.getElementById("id_run_forms");
-        while (myNode.firstChild) {
-            myNode.removeChild(myNode.firstChild);
-        }
-        let run_forms = document.querySelector('#id_run_forms');
-        for (let i = 0; i < choice; i++) {
-            let form = document.querySelector('#shift-form-og');
-            form = form.cloneNode(true);
-            form.querySelector('#form-title').textContent = 'Run ' + (i+1);
-            form.querySelector('#id_start_datetime').name = 'start_datetime_run_' + i;
-            form.querySelector('#id_start_datetime')
-            form.querySelector('#id_end_datetime').name = 'end_datetime_run_' + i;
-            
-            run_forms.appendChild(form);
-        }
-
-        $('[data-toggle="datepicker"]').datetimepicker();
-    });
-    
-</script>
-
-
