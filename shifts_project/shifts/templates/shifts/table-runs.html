@@ -2,6 +2,7 @@
   <thead>
     <tr>
       <th scope="col">Runs</th>
+      <th scope="col">Line</th>
       <th scope="col">Start Time</th>
       <th scope="col">End Time</th>
     </tr>
@@ -9,7 +10,8 @@
   <tbody>
     {% for run in shift.run_set.all %}
       <tr>
-        <th scope="row">{{ forloop.counter }}</th>
+        <td scope="row">{{ forloop.counter }}</td>
+        <td>{{ run.line }}</td>
         <td>{{ run.start_datetime|time:"H:i" }}</td>
         <td>{{ run.end_datetime|time:"H:i" }}</td>
       </tr>

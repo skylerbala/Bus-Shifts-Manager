@@ -14,3 +14,20 @@ main {
   background-color: #cc3333;
   border-color: #cc3333;
 }
+
+.btn-primary:disabled {
+  background-color: #cc3333;
+  border-color: #cc3333;
+}
+
+.table {
+  background-color: #e5e5e5;
+}
+
+table.table-bordered > thead > tr > th {
+  border: 1px solid black;
+}
+
+table.table-bordered > tbody > tr > td{
+  border: 1px solid black;
+}

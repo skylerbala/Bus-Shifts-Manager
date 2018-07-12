@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Shifts{% endblock %}</title>
+    <title>{% block title %}Home{% endblock %}</title>
     
     {% load staticfiles %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
@@ -26,6 +26,8 @@
         ev.stopPropagation();
       });
 
+      $('[data-toggle="datepicker"]').datetimepicker();
+
       document.getElementById('id_number_of_runs').addEventListener('change', () => {
           var selector = document.getElementById('id_number_of_runs');
           var choice = selector[selector.selectedIndex].value;
@@ -39,13 +41,51 @@
               form = form.cloneNode(true);
               form.querySelector('#form-title').textContent = 'Run ' + (i+1);
               form.querySelector('#id_start_datetime').name = 'start_datetime_run_' + i;
-              form.querySelector('#id_start_datetime')
               form.querySelector('#id_end_datetime').name = 'end_datetime_run_' + i;
+              form.querySelector('#id_start_datetime').value = '';
+              form.querySelector('#id_end_datetime').value = '';
+
+              form.querySelector('#id_start_datetime').setAttribute("data-toggle", "datepicker" + i);
+              form.querySelector('#id_end_datetime').setAttribute("data-toggle", "datepicker" + i);
+              function genCharArray(charA, charZ) {
+                  var a = [], i = charA.charCodeAt(0), j = charZ.charCodeAt(0);
+                  for (; i <= j; ++i) {
+                      a.push(String.fromCharCode(i));
+                  }
+                  return a;
+              }
+              let alphabet = genCharArray('A', 'Z')
+
+              let label = document.createElement('label');
+              label.for = 'id_line_select'
+              label.textContent = 'Line:   '
+              
+              let selectEl = document.createElement('select');
+              selectEl.id = 'id_line_select'
+              selectEl.name = 'run_line' + i
+
+              let container = document.createElement('div');
+              container.append(label, selectEl)
+
+              let optionList = selectEl.options;
+        
+              alphabet.forEach(option =>
+                optionList.add(
+                  new Option(option, option)
+                )
+              );
+
+              form.appendChild(container);
+              
+
+              form.querySelector('#id_start_datetime').id = 'id_start_datetime_run_' + i;
+              form.querySelector('#id_end_datetime').id = 'id_end_datetime_run_' + i;
 
               run_forms.appendChild(form);
-          }
 
-          $('[data-toggle="datepicker"]').datetimepicker();
+              var datepickerName = 'datepicker' + i;
+              $('[data-toggle="' + datepickerName + '"]').datetimepicker();         
+          }
       });
     </script>
   </body>

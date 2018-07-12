@@ -10,7 +10,7 @@
   <tbody id='accordion'>
     {% for sg in shift_groups %}
       <tr data-toggle='collapse' href="#shifts{{ forloop.counter }}" class="accordion-toggle">
-        <th scope="row">+</th>
+        <td scope="row">+</td>
         <td>{{ sg.start_datetime|date:"l" }}</td>
         <td>{{ sg.start_datetime|time:"H:i" }}</td>
         <td>{{ sg.end_datetime|time:"H:i" }}</td>

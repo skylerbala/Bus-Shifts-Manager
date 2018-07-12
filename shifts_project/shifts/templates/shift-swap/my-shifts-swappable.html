@@ -10,7 +10,7 @@
     </tr>
   </thead>
   <tbody id='accordion'>
-    {% for shift in open_shifts %}
+    {% for shift in my_shifts_swappable %}
       <tr data-toggle='collapse' href="#shifts{{ forloop.counter }}" class="accordion-toggle">
         <td scope="row">+</td>
         <td>{{ shift.start_datetime|date:"d M Y" }}</td>
@@ -19,9 +19,9 @@
         <td>{{ shift.end_datetime|time:"H:i" }}</td>
         <td style="width:50px">
           <div style='display: flex; justify-content: space-around;'>
-            <form style='inline' action="{% url 'shifts:coverage-cover' pk=shift.pk %}" method='post' enctype="multipart/form-data">
+            <form style='inline' action="{% url 'shifts:swap-remove' pk=shift.pk %}" method='post' enctype="multipart/form-data">
               {% csrf_token %}
-              <button class='btn btn-primary' type='submit'>Cover</button>
+              <button class='btn btn-primary' type='submit'>Remove</button>
             </form>
           </div>
         </td>

@@ -28,5 +28,3 @@ class SelectNumberOfRunsForm(forms.Form):
 
   def __str__(self):
     return 'Runs: {}' % (self.number_of_runs)
-
-

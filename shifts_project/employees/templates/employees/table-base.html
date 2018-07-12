@@ -2,20 +2,16 @@
   <thead>
     <tr>
       <th scope="col">#</th>
-      <th scope="col">Date</th>
-      <th scope="col">Day</th>
-      <th scope="col">Start Time</th>
-      <th scope="col">End Time</th>
+      <th scope="col">Employee</th>
+      <th scope="col">Wage($/hr)</th>
     </tr>
   </thead>
   <tbody id='accordion'>
     {% for employee in employees %}
       <tr data-toggle='collapse' href="#shifts{{ forloop.counter }}" class="accordion-toggle">
         <th scope="row">+</th>
-        <td>{{ shift.start_datetime|date:"d M Y" }}</td>
-        <td>{{ shift.start_datetime|date:"l" }}</td>
-        <td>{{ shift.start_datetime|time:"H:i" }}</td>
-        <td>{{ shift.end_datetime|time:"H:i" }}</td>
+        <td>{{ employee.user.first_name }} {{ employee.user.last_name }}</td>
+        <td>{{ employee.wage }}</td>
       </tr>
     {% endfor %}
   </tbody>
