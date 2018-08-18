@@ -1,0 +1,149 @@
+<table class="table table-bordered table-hover" id='table-database-my-shifts'>
+  <thead>
+    <tr>
+      <th scope="col">Shift #<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
+      <th scope="col">Coverage<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
+      <th scope="col">Lines<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
+      <th scope="col">Date<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
+      <th scope="col">Day<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
+      <th scope="col">Start Time<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
+      <th scope="col">End Time<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
+      <th style="width:1px"></th>
+    </tr>
+  </thead>
+  <tbody id='accordion'>
+    {% for shift in my_shifts %}
+      <tr data-toggle='modal' data-target='#modal_run_id_{{ shift.id }}'>
+        <td scope="row">{{ shift.id }}</td>
+        <td>
+          {% if shift.employee.user.first_name == None %}
+            Open
+          {% else %}
+            {{ shift.employee.user.first_name }} {{ shift.employee.user.last_name }}
+          {% endif %}
+        </td>
+        <td class='lines'>
+          {% for run in shift.run_set.all %}
+            {{ run.line }}
+          {% endfor %}
+        </td>
+        <td class='date'>{{ shift.start_datetime|date:"m/d/Y" }}</td>
+        <td class='day'>{{ shift.start_datetime|date:"l" }}</td>
+        <td class='starttime'>{{ shift.start_datetime|time:"H:i" }}</td>
+        <td class='endtime'>{{ shift.end_datetime|time:"H:i" }}</td>
+        <td style="width:50px">
+          <div class='market-post-button' style='display: flex; flex-direction: column; align-items: center;'>
+            <form class='market-post-form' data-post-url="{% url 'my-shifts:post' pk=shift.pk %}" data-cancel-url="{% url 'market:cover' pk=shift.pk %}" method='post' enctype="multipart/form-data">
+              {% csrf_token %}
+                <button type='submit' class='btn'>
+                  {% if shift.employee == None %}
+                    Cancel
+                  {% else %}
+                    Post
+                  {% endif %}
+                </button>
+            </form>
+            <div class="fb-share-button" 
+              data-href="{% url 'market:cover' pk=shift.pk %}" 
+              data-layout="button" 
+              data-size="large">
+            </div>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% for shift in my_shifts %}
+  <div class="modal fade" id="modal_run_id_{{ shift.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Shift #{{ shift.id }}</h5>
+              </div>
+              <div class="modal-body">
+                  {% if shift.run_set.count != 0 %} 
+                    {% include 'table-runs.html' %}
+                  {% else %}
+                    <p>No runs for this shift</p>
+                  {% endif %}
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn" data-dismiss="modal">Close</button>
+              </div>
+          </div>
+      </div>
+  </div>
+{% endfor %}
+
+
+{% comment %} 
+<table class="table table-bordered table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Shift #</th>
+      <th scope="col">Coverage</th>
+      <th scope="col">Lines</th>
+      <th scope="col">Date</th>
+      <th scope="col">Day</th>
+      <th scope="col">Start Time</th>
+      <th scope="col">End Time</th>
+      <th style="width:1px"></th>
+    </tr>
+  </thead>
+  <tbody id='accordion'>
+    {% for shift in my_shifts %}
+      <tr data-toggle='collapse' href="#shifts{{ forloop.counter }}" class="accordion-toggle">
+        <tr data-toggle='collapse' href="#run{{ forloop.counter }}-{{ forloop.parentloop.counter }}" class="accordion-toggle">
+        <td scope="row">+</td>
+        <td>
+          {% if shift.employee.user.first_name == None %}
+            Open
+          {% else %}
+            {{ shift.employee.user.first_name }} {{ shift.employee.user.last_name }}
+          {% endif %}
+        </td>
+        <td class='lines'>
+          {% for run in shift.run_set.all %}
+            {{ run.line }}
+          {% endfor %}
+        </td>
+        <td class='date'>{{ shift.start_datetime|date:"d M Y" }}</td>
+        <td class='day'>{{ shift.start_datetime|date:"l" }}</td>
+        <td class='starttime'>{{ shift.start_datetime|time:"H:i" }}</td>
+        <td class='endtime'>{{ shift.end_datetime|time:"H:i" }}</td>
+        <td style="width:50px">
+          <div class='market-post-button' style='display: flex; justify-content: space-around;'>
+            <form class='market-post-form' data-post-url="{% url 'my-shifts:post' pk=shift.pk %}" data-cancel-url="{% url 'market:cover' pk=shift.pk %}" method='post' enctype="multipart/form-data">
+              {% csrf_token %}
+                <button type='submit' class='btn'>
+                  {% if shift.employee == None %}
+                    Cancel
+                  {% else %}
+                    Post
+                  {% endif %}
+                </button>
+            </form>
+          </div>
+          <div class="fb-share-button" 
+            data-href="{% url 'market:cover' pk=shift.pk %}" 
+            data-layout="button" 
+            data-size="large">
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="12" class="hiddenRow">
+          <div class="accordian-body collapse" data-parent='#accordion-shifts' id="run{{ forloop.counter }}-{{ forloop.parentloop.counter }}" style="padding-left: 40px; padding-bottom: 20px; background-color:gray"> 
+            {% if shift.run_set.count != 0 %} 
+              {% include 'table-runs.html' %}
+            {% else %}
+              <p>No runs for this shift</p>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+ {% endcomment %}

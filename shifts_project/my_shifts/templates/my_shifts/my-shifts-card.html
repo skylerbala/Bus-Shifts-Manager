@@ -1,0 +1,10 @@
+<div class='card mb-4'>
+  <h3 class='card-header'>My Shifts</h3>
+  <div class='card-body'>
+    {% include 'my_shifts/my-shifts.html' %}
+      
+    {% if not my_shifts %}
+      Currently, you have no shifts! Go to Shift Market to cover some shifts!
+    {% endif %}
+  </div>
+</div>

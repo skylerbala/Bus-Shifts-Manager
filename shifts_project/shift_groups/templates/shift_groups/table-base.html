@@ -1,0 +1,31 @@
+  <table class="table table-bordered table-hover" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">Day</th>
+        <th scope="col">Start Time</th>
+        <th scope="col">End Time</th>
+      </tr>
+    </thead>
+    <tbody id='accordion'>
+      {% for sg in shift_groups %}
+        <tr>
+          <td scope="row" data-toggle='collapse' href="#shifts{{ forloop.counter }}" class="accordion-toggle">+</td>
+          <td>{{ sg.start_datetime|date:"l" }}</td>
+          <td>{{ sg.start_datetime|time:"H:i" }}</td>
+          <td>{{ sg.end_datetime|time:"H:i" }}</td>
+        </tr>
+        <tr>
+          <td colspan="12" class="hiddenRow">
+            <div class="accordion-bo#dy collapse" data-parent='#accordion' id="shifts{{ forloop.counter }}" style='padding-left: 40px; padding-bottom: 20px; background-color:rgb(134, 129, 129)'>
+              {% if sg.shifts.count != 0 %} 
+                {% include 'shift_groups/table-shifts.html' %}
+              {% else %}
+                <p>No runs for this shift</p>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>

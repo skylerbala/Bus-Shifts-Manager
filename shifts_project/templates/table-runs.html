@@ -1,0 +1,20 @@
+<table class="table table-bordered table-hover table">
+  <thead class='thead-dark'>
+    <tr>
+      <th scope="col">Runs</th>
+      <th scope="col">Line</th>
+      <th scope="col">Start Time</th>
+      <th scope="col">End Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for run in shift.run_set.all %}
+      <tr>
+        <td scope="row">{{ forloop.counter }}</td>
+        <td>{{ run.line }}</td>
+        <td>{{ run.start_datetime|time:"H:i" }}</td>
+        <td>{{ run.end_datetime|time:"H:i" }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

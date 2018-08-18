@@ -1,0 +1,21 @@
+{% extends 'base_body.html' %}
+{% block title %}Shift Market{% endblock %}
+{% block main %}
+
+{% if shift_filled %}
+  
+<script>
+  let message = "Unfortunately, the shift you want to cover has already been taken.<br><br>Feel free to browse through and cover the following shifts on this page."
+  bootbox.alert(message)
+</script>
+
+{% endif %}
+
+  <div class='jumbotron'>
+    <h1>Shift Market</h1>
+  </div>
+  
+  {% include 'market/market-card.html' %}
+
+{% endblock %}
+

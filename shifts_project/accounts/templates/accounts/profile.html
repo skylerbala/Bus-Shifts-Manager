@@ -1,0 +1,100 @@
+{% extends 'base_body.html' %}
+{% block title %}{{ user.first_name }} {{ user.last_name }} {% endblock %}
+{% block main %}
+
+  <div class='jumbotron'>
+    <h1>{{ user.first_name }} {{ user.last_name }} </h1>
+  </div>
+  
+  <div class='card mb-4'>
+    <h3 class='card-header'>Profile</h3>
+    <div class='card-body'>
+      <table class="table table-bordered table-hover table">
+        <thead>
+          <tr>
+            <th scope="col" style='width: 300px;'></th>
+            <th scope="col">Info</th>
+            <th scope="col" style='width: 1px;'></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>First Name:</td>
+            <td>{{ user.first_name }}</td>
+            <td><button type='button' onclick="editProfileHandler(this, '{{ user.first_name }}', 'first_name')" class='btn btn-primary'>Edit</button></td>
+          </tr>
+          <tr>
+            <td>Last Name:</td>
+            <td>{{ user.last_name }}</td>
+            <td><button type='button' onclick="editProfileHandler(this, '{{ user.last_name }}', 'last_name')" class='btn btn-primary'>Edit</button></td>
+          </tr>
+          <tr>
+            <td>Phone:</td>
+            <td>{{ user.employee.phone }}</td>
+            <td><button type='button' onclick="editProfileHandler(this, '{{ user.employee.phone }}', 'phone')" class='btn btn-primary'>Edit</button></td>
+          </tr>
+          <tr>
+            <td>Wage:</td>
+            <td>${{ user.employee.wage }}/hr</td>
+            <td><button type='button' onclick="editProfileHandler(this, '{{ user.employee.wage }}', 'wage')" class='btn btn-primary'>Edit</button></td>
+          </tr>
+          <tr>
+            <td>Remaining Absences:</td>
+            <td>{{ user.employee.call_offs }}</td>
+            <td>
+              <button type='button' class='btn btn-primary' onclick="editProfileHandler(this, '{{ user.employee.call_offs }}', 'call_offs')">Edit</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const editProfileHandler = (obj, val, type) => {
+      const el = obj.parentNode.previousElementSibling;
+      $(el).replaceWith(
+        $('<input>', {
+            'type' : 'text',
+            'Size' : '50', // size won't work
+            'autofocus' : 'true',
+            'class' : 'center-block',
+            'display': 'block',
+            'data-input-type': type
+
+        }).keyup((event) => {
+          if (event.keyCode === 13) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', "{% url 'accounts:update-profile' %}", true);
+            xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            xhr.send(`new_val=${event.target.value}&type=${type}`);
+            xhr.onreadystatechange = function() {
+              if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+                let repEl = event.target
+                console.log(repEl, this.responseText)
+                $(repEl).replaceWith(
+                  $('<td>', {
+                      'text' : this.responseText,
+                    }
+                  )
+                );
+              }
+          }
+        }})
+      );
+
+    }
+
+    const changeNow = (obj, val) => {
+      const el = obj;
+      $(el).replaceWith(
+        $('<td>', {
+            'text' : val,
+          }
+        )
+      );
+    }
+  </script>
+{% endblock %}
+

@@ -1,0 +1,64 @@
+<table class="table table-bordered table-hover table" id="table-database-market">
+  <thead>
+    <tr>
+      <th scope="col">Shift #<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
+      <th scope="col">Coverage<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
+      <th scope="col">Lines<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
+      <th scope="col">Date<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
+      <th scope="col">Day<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
+      <th scope="col">Start Time<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
+      <th scope="col">End Time<i class="fa fa-sort float-right" aria-hidden="true"></i></th>
+      <th style="width:1px"></th>
+    </tr>
+  </thead>
+  <tbody id='accordion'>
+    {% for shift in uncovered_shifts %}
+      <tr data-toggle='modal' data-target='#modal_run_id_{{ shift.id }}'>
+        <td scope="row">{{ shift.id }}</td>
+        <td>
+          {% if shift.employee.user.first_name == None %}
+            Open
+          {% else %}
+            {{ shift.employee.user.first_name }} {{ shift.employee.user.last_name }}
+          {% endif %}
+        </td>
+        <td>
+          {% for run in shift.run_set.all %}
+            {{ run.line }}
+          {% endfor %}
+        </td>
+        <td>{{ shift.start_datetime|date:"m/d/Y" }}</td>
+        <td>{{ shift.start_datetime|date:"l" }}</td>
+        <td>{{ shift.start_datetime|time:"H:i" }}</td>
+        <td>{{ shift.end_datetime|time:"H:i" }}</td>
+        <td style="width:50px">
+          <div class='market-post-button' style='display: flex; justify-content: space-around;'>
+            <input class='btn market-shift-cover' href="{% url 'market:cover' pk=shift.pk %}" type="button" value='Cover'/>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% for shift in uncovered_shifts %}
+  <div class="modal fade" id="modal_run_id_{{ shift.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Shift #{{ shift.id }}</h5>
+              </div>
+              <div class="modal-body">
+                  {% if shift.run_set.count != 0 %} 
+                    {% include 'table-runs.html' %}
+                  {% else %}
+                    <p>No runs for this shift</p>
+                  {% endif %}
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn" data-dismiss="modal">Close</button>
+              </div>
+          </div>
+      </div>
+  </div>
+{% endfor %}
+

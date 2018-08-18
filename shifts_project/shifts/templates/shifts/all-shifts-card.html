@@ -1,0 +1,9 @@
+<div class='card mb-4'>
+  <h3 class='card-header'>All Shifts</h3>
+  <div class='card-body'>
+    {% include 'shifts/all-shifts.html' %}
+    {% if not all_shifts %}
+      <p>Currently, there are no shifts; add some!</p>
+    {% endif %}
+  </div>
+</div>
