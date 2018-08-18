@@ -8,9 +8,9 @@ class EmployeeManager(models.Manager):
 
 class Employee(models.Model):
   user = models.OneToOneField(User)
-  city = models.CharField(max_length=100, null=True, blank=True)
   phone = models.IntegerField(null=True, blank=True)
   wage = models.IntegerField(default=0)
+  call_offs = models.IntegerField(default=3)
 
   def __str__(self):
     return self.user.username

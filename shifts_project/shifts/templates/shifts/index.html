@@ -1,19 +1,19 @@
 {% extends 'base_body.html' %}
-{% block title %}Shifts{% endblock %}
+{% block title %}All Shifts{% endblock %}
 {% block main %}
 
   <div class='jumbotron'>
-    <h1>Shifts</h1>
+    <h1>All Shifts</h1>
   </div>
   
-  {% comment %} Shift Form {% endcomment %}
-  {% include 'shifts/shift-form.html' %}
-
   <div class='card'>
-    <h3 class='card-header'>Grouped Shifts</h3>
+    <h3 class='card-header'>Add Shift</h3>
     <div class='card-body'>
-      {% include 'shifts/table-base.html' %}
+      {% include 'shifts/shift-form.html' %}
     </div>
   </div>
+
+  {% include 'shifts/all-shifts-card.html' %}
+
 {% endblock %}
 

@@ -1,94 +1,79 @@
-from django.http import HttpResponseRedirect, JsonResponse
-from django.views import generic
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse, Http404
 from django.shortcuts import render, redirect
-from django.core import serializers
-from django.views.decorators.http import require_GET, require_POST
-from django.forms import formset_factory
 from django.contrib.auth.decorators import user_passes_test
-from .models import Shift
-from .models import Run
-from .models import ShiftGroup
-from .forms import ShiftForm, SelectNumberOfRunsForm, RunForm, EmployeeForm
-from django.views.decorators.csrf import csrf_exempt
-from django.template import RequestContext
 from django.core.urlresolvers import reverse_lazy
+from .models import Shift, Run, ShiftGroup
+from .forms import ShiftForm, SelectNumberOfRunsForm, RunForm, EmployeeForm
 import datetime
+from string import join
 
 
 template_name = 'shifts/index.html'
-
+# Shifts
 @user_passes_test(lambda u:u.is_staff, login_url=reverse_lazy('shifts:forbidden'))
 def get_shifts(request):
     if request.method == 'GET':
+        all_shifts = Shift.objects.all()
         shift_form = ShiftForm()
         employee_form = EmployeeForm()
         select_number_of_runs_form = SelectNumberOfRunsForm()
-        shift_groups = get_ordered_shift_groups()
-
         num_visits = request.session.get('num_visits', 0)
-        request.session['num_visits'] = num_visits+1
-        print(num_visits)
+        request.session['num_visits'] = num_visits + 1 
 
         data = {
             'shift_form': shift_form,
             'employee_form': employee_form,
-            'shift_groups': shift_groups,
+            'all_shifts': all_shifts,
             'select_number_of_runs_form': select_number_of_runs_form
         }
         return render(request, template_name, data)
 
-def get_num_of_runs(request):
-    num_of_runs = int(request.GET['num_of_runs'])
-    RunFormSet = formset_factory(RunForm, extra=num_of_runs)
-    run_formset = RunFormSet()
-    data = {
-        'run_formset': run_formset.as_table()
-    }
-    return JsonResponse(data)
-
 def add_shift(request):
     if request.method == 'POST':
+        response = {}
+
         shift_form = ShiftForm(request.POST)
-        shift_groups = get_ordered_shift_groups()
-        select_number_of_runs_form = SelectNumberOfRunsForm()
         employee_form = EmployeeForm(request.POST)
 
+        shift_groups = ShiftGroup.objects.get_ordered_shift_groups()
+        run_times_list = []
         if shift_form.is_valid() and employee_form.is_valid():
             start_datetime = shift_form.cleaned_data['start_datetime']
             end_datetime = shift_form.cleaned_data['end_datetime']
             employee = employee_form.cleaned_data['employee']
 
-            run_times_list = []
-
             for i in range(0, int(request.POST['number_of_runs'])):
                 start_datetime_val = 'start_datetime_run_' + str(i)
                 end_datetime_val = 'end_datetime_run_' + str(i)
                 line_val = 'run_line' + str(i)
-                    
-                
-                run_start_datetime = datetime.datetime.strptime((request.POST[start_datetime_val]), "%Y/%m/%d %H:%M").time()
-                run_end_datetime = datetime.datetime.strptime((request.POST[end_datetime_val]), "%Y/%m/%d %H:%M").time()
+                run_start_datetime = datetime.datetime.strptime((request.POST[start_datetime_val]), "%m/%d/%Y %H:%M").time()
+                run_end_datetime = datetime.datetime.strptime((request.POST[end_datetime_val]), "%m/%d/%Y %H:%M").time()
                 run_line = request.POST[line_val]
 
-                run_times_list.append(
-                    {
-                        'start_time': run_start_datetime,
-                        'end_time': run_end_datetime,
-                        'line': run_line
-                    }
-                )
+                run_times_list.append({
+                    'start_time': run_start_datetime,
+                    'end_time': run_end_datetime,
+                    'line': run_line
+                })
 
             shift_instance = Shift.objects.create_shift(start_datetime, end_datetime, run_times_list, employee)
 
-            return redirect('shifts:index')
+            lines = []
+            for run in shift_instance.run_set.all():
+                lines += run.line
+            lines = ', '.join(lines)
+            
+            response = {
+                'shiftID': shift_instance.id,
+                'coverage': shift_instance.employee or 'Open',
+                'lines': lines,
+                'date': shift_instance.start_datetime.strftime('%m/%d/%y'),
+                'day': shift_instance.start_datetime.strftime('%A'),
+                'startTime': shift_instance.start_datetime.strftime('%H:%M'),
+                'endTime': shift_instance.end_datetime.strftime('%H:%M'),
+            }
 
-        data = {
-            'shift_form': shift_form,
-            'employee_form': employee_form,
-            'shift_groups': shift_groups,
-            'select_number_of_runs_form': select_number_of_runs_form,
-        }
-        return render(request, template_name, data)
+            return JsonResponse(response)
 
 def update_shift(request, pk):
     pass
@@ -97,69 +82,7 @@ def delete_shift(request, pk):
     Shift.objects.delete_shift(pk=pk)
     return redirect('shifts:index')
 
-def get_ordered_shift_groups():
-    def add_shifts(sg):
-        shifts = Shift.objects.filter(shift_group_id=sg['id']).order_by('start_datetime')
-        sg['shifts'] = shifts
-        return sg
-    def sortByWeekday(shift_group):
-        return shift_group['start_datetime'].weekday()
-
-    shift_groups = ShiftGroup.objects.all().values()
-    shift_groups = map(add_shifts, shift_groups)
-    shift_groups = sorted(shift_groups, key=sortByWeekday)
-
-    return shift_groups
-
-def coverage(request):
-    if request.method == 'GET':
-        open_shifts = Shift.objects.filter(employee__isnull=True).order_by('start_datetime')
-        filled_shifts = Shift.objects.filter(employee__isnull=False, employee__exact=request.user.employee, can_swap=True).order_by('start_datetime')
-
-        data = {
-            'open_shifts': open_shifts,
-            'filled_shifts': filled_shifts
-        }
-
-        return render(request, 'shift-coverage/index.html', data)
-
-def coverage_fill(request, pk):
-    if request.method == 'POST':
-        shift = Shift.objects.get(pk=pk)
-        shift.employee = request.user.employee
-        shift.save()
-
-        return redirect('shifts:coverage')
-
 def forbidden(request):
     return render(request, 'shifts/403.html')
 
-def swap(request):
-    if request.method == 'GET':
-        swap_market = Shift.objects.filter(can_swap=True).exclude(employee__exact=request.user.employee).order_by('start_datetime')
-        my_shifts = Shift.objects.filter(employee__isnull=False, employee__exact=request.user.employee).order_by('start_datetime')
-        my_shifts_swappable = Shift.objects.filter(employee__isnull=False, employee__exact=request.user.employee, can_swap=True).order_by('start_datetime')
 
-        data = {
-            'swap_market': swap_market,
-            'my_shifts': my_shifts,
-            'my_shifts_swappable': my_shifts_swappable
-        }
-
-        return render(request, 'shift-swap/index.html', data)
-
-def swap_put(request, pk):
-    if request.method == 'POST':
-        shift = Shift.objects.get(pk=pk)
-        shift.can_swap = True
-        shift.save()
-
-        return redirect('shifts:swap')
-
-def swap_remove(request, pk):
-    if request.method == 'POST':
-        shift = Shift.objects.get(pk=pk)
-        shift.can_swap = False
-        shift.save()
-
-        return redirect('shifts:swap')

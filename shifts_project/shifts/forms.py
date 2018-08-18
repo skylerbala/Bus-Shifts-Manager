@@ -12,15 +12,15 @@ class EmployeeChoiceField(forms.ModelChoiceField):
     return "{}; {}".format(obj.user.first_name, obj.user_id)
 
 class EmployeeForm(forms.Form):
-  employee = EmployeeChoiceField(queryset=Employee.objects.all(), label='Employee Name/ID',)
+  employee = EmployeeChoiceField(queryset=Employee.objects.all(), label='Employee Name/ID', required=False)
 
 class ShiftForm(forms.Form):
-  start_datetime = forms.DateTimeField(input_formats=['%Y/%m/%d %H:%M'], widget=forms.DateTimeInput(attrs={'class':'form-control col-form-label', 'data-toggle':'datepicker'}), label='Start', help_text='Enter start date/time')
-  end_datetime = forms.DateTimeField(input_formats=['%Y/%m/%d %H:%M'],widget=forms.DateTimeInput(attrs={'class':'form-control col-form-label', 'data-toggle':'datepicker'}), label='End', help_text='Enter end date/time')
+  start_datetime = forms.DateTimeField(input_formats=['%m/%d/%Y %H:%M'], widget=forms.DateTimeInput(attrs={'class':'form-control col-form-label', 'data-toggle':'datepicker'}), label='Start', help_text='Enter start date/time')
+  end_datetime = forms.DateTimeField(input_formats=['%m/%d/%Y %H:%M'],widget=forms.DateTimeInput(attrs={'class':'form-control col-form-label', 'data-toggle':'datepicker'}), label='End', help_text='Enter end date/time')
   
 class RunForm(forms.Form):
-  start_datetime = forms.DateTimeField(input_formats=['%Y/%m/%d %H:%M'], widget=forms.DateTimeInput(attrs={'class':'form-control col-form-label', 'data-toggle':'datepicker'}), label='Start')
-  end_datetime = forms.DateTimeField(input_formats=['%Y/%m/%d %H:%M'],widget=forms.DateTimeInput(attrs={'class':'form-control col-form-label', 'data-toggle':'datepicker'}), label='End')
+  start_datetime = forms.DateTimeField(input_formats=['%m/%d/%Y %H:%M'], widget=forms.DateTimeInput(attrs={'class':'form-control col-form-label', 'data-toggle':'datepicker'}), label='Start')
+  end_datetime = forms.DateTimeField(input_formats=['%m/%d/%Y %H:%M'],widget=forms.DateTimeInput(attrs={'class':'form-control col-form-label', 'data-toggle':'datepicker'}), label='End')
 
 class SelectNumberOfRunsForm(forms.Form):
   CHOICES = [ (i,i) for i in range(11) ]

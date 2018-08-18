@@ -21,5 +21,9 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^home/', include('home.urls', namespace='home')),
     url(r'^shifts/', include('shifts.urls', namespace='shifts')),
-    url(r'^employees/', include('employees.urls', namespace='employees')), 
+    url(r'^my-shifts/', include('my_shifts.urls', namespace='my-shifts')),
+    url(r'^shift-groups/', include('shift_groups.urls', namespace='shift-groups')), 
+    url(r'^market/', include('market.urls', namespace='market')),
+    url(r'^employees/', include('employees.urls', namespace='employees')),
+    url(r'^upload-excel/', include('uploadexcel.urls', namespace='upload-excel')), 
 ]

@@ -1,7 +1,7 @@
 <div class="card mb-4">
     <h3 class='card-header'>Add Shift</h3>
     <div class='card-body'>
-        <form class="form-horizontal" action="{% url 'shifts:add' %}" method="post" enctype="multipart/form-data" autocomplete="off">
+        <form id='shift-add-form' class="form-horizontal" action="{% url 'shifts:add' %}" method="post" enctype="multipart/form-data" autocomplete="off">
             {% csrf_token %}
             <div id='shift-form-og'>
                 <h3 id='form-title'>Shift</h3>

@@ -1,4 +1,4 @@
-<table class="table table-bordered table-hover">
+<table class="table table-bordered table-hover" id='table-database-employees'>
   <thead>
     <tr>
       <th scope="col">#</th>
@@ -9,7 +9,7 @@
   <tbody id='accordion'>
     {% for employee in employees %}
       <tr data-toggle='collapse' href="#shifts{{ forloop.counter }}" class="accordion-toggle">
-        <th scope="row">+</th>
+        <td scope="row">+</td>
         <td>{{ employee.user.first_name }} {{ employee.user.last_name }}</td>
         <td>{{ employee.wage }}</td>
       </tr>

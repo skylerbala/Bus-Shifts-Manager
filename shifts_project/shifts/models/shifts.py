@@ -2,6 +2,8 @@ from django.utils.timezone import utc, make_aware, get_default_timezone
 import datetime
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.db.models import Q
+
 
 class ShiftManager(models.Manager):
 
@@ -45,6 +47,10 @@ class ShiftManager(models.Manager):
             ShiftGroup.objects.filter(pk=shift_group_id).delete()
         
         shift_delete.delete()
+    
+    def get_uncovered_shifts(self, request):
+        return Shift.objects.filter(Q(employee__isnull=True)).exclude(employee__exact=request.user.employee).order_by('start_datetime')
+
 
 class Shift(models.Model):    
     from .shift_groups import ShiftGroup
@@ -55,8 +61,7 @@ class Shift(models.Model):
     start_datetime = models.DateTimeField()
     end_datetime = models.DateTimeField()
     shift_group = models.ForeignKey(ShiftGroup, related_name='shift_set', on_delete=models.CASCADE, null=True)
-    employee = models.ForeignKey(Employee, related_name='employee_set', on_delete=models.CASCADE, null=True)
-    can_swap = models.BooleanField(default=False)
+    employee = models.ForeignKey(Employee, related_name='shift_set', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return str(self.start_datetime)

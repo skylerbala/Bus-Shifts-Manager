@@ -42,6 +42,9 @@ INSTALLED_APPS = (
     'home',
     'accounts',
     'employees',
+    'my_shifts',
+    'market',
+    'shift_groups',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -120,3 +123,5 @@ LOGIN_EXEMPT_URLS = (
     r'^register/$',
 )
 
+FILE_UPLOAD_HANDLERS = ("django_excel.ExcelMemoryFileUploadHandler",
+                        "django_excel.TemporaryExcelFileUploadHandler")
